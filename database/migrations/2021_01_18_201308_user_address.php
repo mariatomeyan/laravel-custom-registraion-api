@@ -13,10 +13,10 @@ class UserAddress extends Migration
      */
     public function up()
     {
-        Schema::create('user_address', function (Blueprint $table) {
-            $table->id();
+        Schema::create('address_user', function (Blueprint $table) {
             $table->integer('user_id');
             $table->integer('address_id');
+            $table->primary(['user_id', 'address_id']);
             $table->timestamps();
         });
     }
