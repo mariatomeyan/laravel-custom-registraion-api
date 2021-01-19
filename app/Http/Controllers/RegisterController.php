@@ -36,9 +36,9 @@ class RegisterController extends Controller
            $response = $this->storeDemoPaymentOnRemoteServer($stored_account);
 
            if($response->successful()) {
-               return response()->json(['message' => 'You have been registered successfully!', $response]);
+               return response()->json(['message' => 'You have been registered successfully!', $response->json()]);
            } elseif ($response->failed()) {
-               return response()->json(['message' => 'Oops,  something went wrong!', $response]);
+               return response()->json(['message' => 'Oops,  something went wrong!', $response->json()]);
            }
 
         } catch (\Exception $exception) {
@@ -49,14 +49,7 @@ class RegisterController extends Controller
     private function storeDemoPaymentOnRemoteServer(Account $account)
     {
         $wrapped_account = new \App\Http\Resources\Account($account);
-        Log::debug(collect($wrapped_account));
-
-        return Http::post(env('DEMO_STORAGE_API'), array(
-            'customerId' => 234,
-            'iban' => 'DE8234',
-            'owner'=> 'Max Mustermann'
-
-        ));
+        return Http::post(env('DEMO_STORAGE_API'), collect($wrapped_account)->toArray() );
     }
 
 
