@@ -18,6 +18,7 @@ class CreateAccountsTable extends Migration
             $table->string('iban');
             $table->string('owner');
             $table->integer('customer_id');
+            $table->string('payment_data_id')->nullable();
             $table->timestamps();
         });
     }
