@@ -32,11 +32,16 @@ class RegisterController extends Controller
             );
 
            $this->attachAddressToUser(collect($request->address));
-           $stored_account = $this->storeAccount(collect($request->account));
-           $response = $this->storeDemoPaymentOnRemoteServer($stored_account);
+           $account = $this->storeAccount(collect($request->account));
+           $response = $this->storeDemoPaymentOnRemoteServer($account);
 
            if($response->successful()) {
-               return response()->json(['message' => 'You have been registered successfully!', $response->json()]);
+
+               $payment_data_id =  collect($response->json())->get('paymentDataId');
+               $this->updateAccountsPaymentDataId($account,  $payment_data_id);
+
+               return response()->json(['message' => 'You have been registered successfully!', 'paymentDataId' => $payment_data_id]);
+
            } elseif ($response->failed()) {
                return response()->json(['message' => 'Oops,  something went wrong!', $response->json()]);
            }
@@ -44,6 +49,12 @@ class RegisterController extends Controller
         } catch (\Exception $exception) {
             return response()->json([ 'success'=> false, 'message' => $exception->getMessage(), 'code' => $exception->getCode()]);
         }
+    }
+
+    private function updateAccountsPaymentDataId(Account $account, $dataId)
+    {
+        $account->payment_data_id = $dataId;
+        return $account->save();
     }
 
     private function storeDemoPaymentOnRemoteServer(Account $account)
