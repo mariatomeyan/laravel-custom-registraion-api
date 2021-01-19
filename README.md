@@ -4,6 +4,7 @@ mv .env.example .env
 
 
 // Database Strcture is defined in Migration files under /database/migrations folder
+composer install
 
 php artisan migrate 
 
